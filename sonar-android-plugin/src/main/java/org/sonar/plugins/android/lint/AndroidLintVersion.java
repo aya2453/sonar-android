@@ -17,11 +17,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.lint;
+package org.sonar.plugins.android.sensor;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.LoggerFactory;
+import org.sonar.api.utils.log.Loggers;
 
 import java.io.InputStream;
 import java.util.Properties;
@@ -43,18 +42,14 @@ public enum AndroidLintVersion {
 
   @VisibleForTesting
   static String readVersion(String propertyPath) {
-    InputStream input = AndroidLintVersion.class.getResourceAsStream(propertyPath);
-    try {
+    try (InputStream input = AndroidLintVersion.class.getResourceAsStream(propertyPath);) {
       Properties properties = new Properties();
       properties.load(input);
       return properties.getProperty("lint.version");
 
     } catch (Exception e) {
-      LoggerFactory.getLogger(AndroidLintVersion.class).warn("Can not load the Android Lint version from the file " + propertyPath, e);
+      Loggers.get(AndroidLintVersion.class).warn("Can not load the Android Lint version from the file " + propertyPath, e);
       return "";
-
-    } finally {
-      IOUtils.closeQuietly(input);
     }
   }
 }

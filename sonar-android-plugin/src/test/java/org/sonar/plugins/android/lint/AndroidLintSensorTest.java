@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.lint;
+package org.sonar.plugins.android.sensor;
 
 import com.google.common.collect.Lists;
 import org.junit.Before;
@@ -93,7 +93,7 @@ public class AndroidLintSensorTest {
         return Lists.<InputFile>newArrayList(new DefaultInputFile("relativePath"));
       }
     };
-    settings.setProperty(AndroidPlugin.LINT_REPORT_PROPERTY, "src/test/resources/lint-report.xml");
+    settings.setProperty(AndroidPlugin.LINT_REPORT_PROPERTY, "src/test/resources/sensor-report.xml");
     AndroidLintSensor sensor = new AndroidLintSensor(settings, rulesProfile, perspectives, fs);
     sensor.analyse(mock(Project.class), mock(SensorContext.class));
     // Check we raise 30 issues on 21 different rules

@@ -17,58 +17,78 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.lint;
+package org.sonar.plugins.android.sensor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.sonar.api.batch.Sensor;
-import org.sonar.api.batch.SensorContext;
+
 import org.sonar.api.batch.fs.FileSystem;
-import org.sonar.api.component.ResourcePerspectives;
-import org.sonar.api.config.Settings;
+import org.sonar.api.batch.sensor.Sensor;
+import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.resources.Project;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugins.android.AndroidPlugin;
 
 import java.io.File;
 
+
 public class AndroidLintSensor implements Sensor {
-  private static final Logger LOGGER = LoggerFactory.getLogger(AndroidLintSensor.class);
+  private static final Logger LOGGER = Loggers.get((AndroidLintSensor.class));
+
 
   private RulesProfile profile;
-  private final ResourcePerspectives perspectives;
+  //  private final ResourcePerspectives perspectives;
   private FileSystem fs;
 
-  private final File lintReport;
-
-  public AndroidLintSensor(Settings settings, RulesProfile profile, ResourcePerspectives perspectives, FileSystem fs) {
-    this.profile = profile;
-    this.perspectives = perspectives;
-    this.fs = fs;
-    this.lintReport = getFile(settings.getString(AndroidPlugin.LINT_REPORT_PROPERTY));
+  @Override
+  public void describe(SensorDescriptor sensorDescriptor) {
+//    sensorDescriptor.name("");
+//    sensorDescriptor.onlyOnLanguages("java", "kotlin", "xml");
   }
+
 
   @Override
-  public void analyse(Project project, SensorContext sensorContext) {
-    new AndroidLintProcessor(profile, perspectives, fs).process(lintReport);
-  }
-
-  @Override
-  public boolean shouldExecuteOnProject(Project project) {
-    return lintReport != null && lintReport.exists();
-  }
-
-  private File getFile(String path) {
+  public void execute(SensorContext sensorContext) {
+    String lintResultPath = sensorContext.config().get(AndroidPlugin.Property.LINT_REPORT).orElse("");
+    File file;
     try {
-      File file = new File(path);
-      if (!file.isAbsolute()) {
-        file = new File(fs.baseDir(), path).getCanonicalFile();
-      }
-      return file;
+      file = sensorContext.fileSystem().resolvePath(lintResultPath);
     } catch (Exception e) {
-      LOGGER.warn("Lint report not found, please set {} property to a correct value.", AndroidPlugin.LINT_REPORT_PROPERTY);
-      LOGGER.warn("Unable to resolve path : "+path, e);
+      LOGGER.warn("Lint report not found, please set {} property to a correct value.", AndroidPlugin.Property.LINT_REPORT);
+      LOGGER.warn("Unable to resolve path : " + lintResultPath, e);
+      return;
     }
-    return null;
+    AndroidLintProcessor.process(file, sensorContext);
   }
+
+//  public AndroidLintSensor(Settings settings, RulesProfile profile, ResourcePerspectives perspectives, FileSystem fs) {
+//    this.profile = profile;
+//    this.perspectives = perspectives;
+//    this.fs = fs;
+//    this.lintReport = getFile(settings.getString(AndroidPlugin.LINT_REPORT_PROPERTY));
+//  }
+
+//  @Override
+//  public void analyse(Project project, SensorContext sensorContext) {
+//    new AndroidLintProcessor(profile, perspectives, fs).process(lintReport);
+//  }
+//
+//  @Override
+//  public boolean shouldExecuteOnProject(Project project) {
+//    return lintReport != null && lintReport.exists();
+//  }
+//
+//  private File getFile(String path) {
+//    try {
+//      File file = new File(path);
+//      if (!file.isAbsolute()) {
+//        file = new File(fs.baseDir(), path).getCanonicalFile();
+//      }
+//      return file;
+//    } catch (Exception e) {
+//      LOGGER.warn("Lint report not found, please set {} property to a correct value.", AndroidPlugin.Property.LINT_REPORT);
+//      LOGGER.warn("Unable to resolve path : " + path, e);
+//    }
+//    return null;
+//  }
 }

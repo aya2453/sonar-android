@@ -17,14 +17,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.lint;
+package org.sonar.plugins.android.sensor;
 
 import com.android.tools.lint.checks.BuiltinIssueRegistry;
 import com.android.tools.lint.detector.api.Issue;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.profiles.ProfileImporter;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.rule.RuleKey;
@@ -33,15 +31,17 @@ import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleFinder;
 import org.sonar.api.rules.RulePriority;
 import org.sonar.api.utils.ValidationMessages;
-import org.sonar.plugins.android.lint.AndroidLintProfileExporter.LintProfile;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+import org.sonar.plugins.android.sensor.AndroidLintProfileExporter.LintProfile;
 
 import java.io.Reader;
 
-import static org.sonar.plugins.android.lint.AndroidLintProfileExporter.LintIssue;
+import static org.sonar.plugins.android.sensor.AndroidLintProfileExporter.LintIssue;
 
 public class AndroidLintProfileImporter extends ProfileImporter {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AndroidLintProfileImporter.class);
+  private static final Logger LOGGER = Loggers.get(AndroidLintProfileImporter.class);
   public static final int PRIORITY_THRESHOLD = 7;
 
   private final RuleFinder ruleFinder;
@@ -49,7 +49,7 @@ public class AndroidLintProfileImporter extends ProfileImporter {
   public AndroidLintProfileImporter(RuleFinder ruleFinder) {
     super(AndroidLintRulesDefinition.REPOSITORY_KEY, AndroidLintRulesDefinition.REPOSITORY_NAME);
     this.ruleFinder = ruleFinder;
-    setSupportedLanguages("java", "xml");
+    setSupportedLanguages("java", "xml", "kotlin");
   }
 
   @Override
@@ -73,8 +73,8 @@ public class AndroidLintProfileImporter extends ProfileImporter {
         }
       }
     } catch (Exception e) {
-      messages.addErrorText("Android lint profile could not be imported.");
-      LOGGER.error("Android lint profile could not be imported.", e);
+      messages.addErrorText("Android sensor profile could not be imported.");
+      LOGGER.error("Android sensor profile could not be imported.", e);
     }
     return rulesProfile;
   }

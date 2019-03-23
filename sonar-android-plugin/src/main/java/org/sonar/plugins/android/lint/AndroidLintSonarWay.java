@@ -17,36 +17,28 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.lint;
+package org.sonar.plugins.android.sensor;
 
-import com.google.common.base.Charsets;
-import org.apache.commons.io.IOUtils;
-import org.sonar.api.profiles.ProfileDefinition;
-import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.profiles.XMLProfileParser;
-import org.sonar.api.utils.ValidationMessages;
+import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-public class AndroidLintSonarWay extends ProfileDefinition {
+public class AndroidLintSonarWay implements BuiltInQualityProfilesDefinition {
 
   public static final String PROFILE_XML_PATH = "/org/sonar/plugins/android/lint/android_lint_sonar_way.xml";
 
-  private final XMLProfileParser parser;
-
-  public AndroidLintSonarWay(XMLProfileParser parser) {
-    this.parser = parser;
-  }
 
   @Override
-  public RulesProfile createProfile(ValidationMessages validationMessages) {
-    InputStream input = getClass().getResourceAsStream(PROFILE_XML_PATH);
-    InputStreamReader reader = new InputStreamReader(input, Charsets.UTF_8);
-    try {
-      return parser.parse(reader, validationMessages);
-    } finally {
-      IOUtils.closeQuietly(reader);
-    }
+  public void define(Context context) {
+//    context.createBuiltInQualityProfile();
   }
+
+//  @Override
+//  public RulesProfile createProfile(ValidationMessages validationMessages) {
+//    InputStream input = getClass().getResourceAsStream(PROFILE_XML_PATH);
+//    InputStreamReader reader = new InputStreamReader(input, Charsets.UTF_8);
+//    try {
+//      return parser.parse(reader, validationMessages);
+//    } finally {
+//      IOUtils.closeQuietly(reader);
+//    }
+//  }
 }

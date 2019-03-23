@@ -17,78 +17,71 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.lint;
+package org.sonar.plugins.android.sensor;
 
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.sonar.api.batch.fs.FileSystem;
+import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.component.ResourcePerspectives;
-import org.sonar.api.issue.Issuable;
-import org.sonar.api.issue.Issue;
-import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.rules.ActiveRule;
+import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.batch.sensor.issue.NewIssue;
+import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import java.io.File;
 import java.util.List;
 
-public class AndroidLintProcessor {
+class AndroidLintProcessor {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AndroidLintProcessor.class);
-  private final RulesProfile profile;
-  private final ResourcePerspectives perspectives;
-  private final FileSystem fs;
+  private static final Logger LOGGER = Loggers.get(AndroidLintProcessor.class);
 
-  public AndroidLintProcessor(RulesProfile profile, ResourcePerspectives perspectives, FileSystem fs) {
-    this.profile = profile;
-    this.perspectives = perspectives;
-    this.fs = fs;
+  private AndroidLintProcessor() {
   }
 
-  public void process(File lintXml) {
+  public static void process(final File lintXml, final SensorContext context) {
     Serializer serializer = new Persister();
     try {
-      LOGGER.info("Processing android lint report: "+lintXml.getPath());
-      LintIssues lintIssues = serializer.read(LintIssues.class, lintXml);
-      for (LintIssue lintIssue : lintIssues.issues) {
-        processIssue(lintIssue);
-      }
+      LOGGER.info("Processing android sensor report: " + lintXml.getPath());
+      serializer.read(LintIssues.class, lintXml).issues
+        .stream()
+        .filter(lintIssue ->
+          context.activeRules().find(RuleKey.of(AndroidLintRulesDefinition.REPOSITORY_KEY, lintIssue.id)) != null
+        ).forEach(
+        lintIssue ->
+          lintIssue.locations.forEach(
+            locations -> processIssueForLocation(lintIssue, locations, context)
+          ));
+
     } catch (Exception e) {
       LOGGER.error("Exception reading " + lintXml.getPath(), e);
     }
   }
 
-  private void processIssue(LintIssue lintIssue) {
-    ActiveRule rule = profile.getActiveRule(AndroidLintRulesDefinition.REPOSITORY_KEY, lintIssue.id);
-    if (rule != null) {
-      LOGGER.debug("Processing Issue: {}", lintIssue.id);
-      for (LintLocation lintLocation : lintIssue.locations) {
-        processIssueForLocation(rule, lintIssue, lintLocation);
-      }
-    } else {
-      LOGGER.warn("Unable to find rule for {}", lintIssue.id);
-    }
-  }
+  private static void processIssueForLocation(LintIssue lintIssue, LintLocation lintLocation, SensorContext context) {
 
-  private void processIssueForLocation(ActiveRule rule, LintIssue lintIssue, LintLocation lintLocation) {
-    InputFile inputFile = fs.inputFile(fs.predicates().hasPath(lintLocation.file));
+    FilePredicates predicates = context.fileSystem().predicates();
+    InputFile inputFile = context.fileSystem().inputFile(predicates.and(predicates.hasRelativePath(lintLocation.file)));
     if (inputFile != null) {
       LOGGER.debug("Processing File {} for Issue {}", lintLocation.file, lintIssue.id);
-      Issuable issuable = perspectives.as(Issuable.class, inputFile);
-      if (issuable != null) {
-        Issue issue = issuable.newIssueBuilder()
-          .ruleKey(rule.getRule().ruleKey())
-            .message(lintIssue.message)
-            .line(lintLocation.line)
-            .build();
-        issuable.addIssue(issue);
-        return;
+      RuleKey ruleKey = RuleKey.of(AndroidLintRulesDefinition.REPOSITORY_KEY, lintIssue.id);
+      NewIssue newIssue = context.newIssue()
+        .forRule(ruleKey);
+
+      NewIssueLocation primaryLocation = newIssue.newLocation()
+        .on(inputFile)
+        .message(lintIssue.message);
+      if (lintLocation.line > 0) {
+        primaryLocation.at(inputFile.selectLine(lintLocation.line));
       }
+      newIssue.at(primaryLocation);
+
+      newIssue.save();
+
     }
     LOGGER.warn("Unable to find file {} to report issue", lintLocation.file);
   }

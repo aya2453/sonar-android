@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.lint.rulesgenerator;
+package org.sonar.plugins.android.sensor.rulesgenerator;
 
 import com.android.tools.lint.checks.BuiltinIssueRegistry;
 import com.android.tools.lint.client.api.IssueRegistry;
@@ -27,12 +27,11 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.plugins.android.lint.AndroidLintRulesDefinition;
-import org.sonar.plugins.android.lint.AndroidLintSonarWay;
-import org.sonar.plugins.android.lint.rulesgenerator.dto.DtoProfile;
-import org.sonar.plugins.android.lint.rulesgenerator.dto.DtoRule;
-import org.sonar.plugins.android.lint.rulesgenerator.dto.DtoRules;
-import org.sonar.plugins.java.Java;
+import org.sonar.plugins.android.sensor.AndroidLintRulesDefinition;
+import org.sonar.plugins.android.sensor.AndroidLintSonarWay;
+import org.sonar.plugins.android.sensor.rulesgenerator.dto.DtoProfile;
+import org.sonar.plugins.android.sensor.rulesgenerator.dto.DtoRule;
+import org.sonar.plugins.android.sensor.rulesgenerator.dto.DtoRules;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -58,7 +57,7 @@ public class SonarRulesGenerator {
   @SuppressWarnings("ResultOfMethodCallIgnored")
   public void generateRules() {
     dtoProfile.setName(PROFILE_NAME);
-    dtoProfile.setLanguage(Java.KEY);
+    dtoProfile.setLanguage("java");
 
     for (Issue issue : getIssues()) {
       processIssue(issue);
@@ -121,7 +120,7 @@ public class SonarRulesGenerator {
 
   private List<Issue> getIssues() {
     IssueRegistry registry = new BuiltinIssueRegistry();
-    List<Issue> sorted = new ArrayList<Issue>(registry.getIssues());
+    List<Issue> sorted = new ArrayList<>(registry.getIssues());
     Collections.sort(sorted, new Comparator<Issue>() {
       @Override
       public int compare(Issue issue1, Issue issue2) {

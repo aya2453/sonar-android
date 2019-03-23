@@ -17,12 +17,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.lint.rulesgenerator.dto;
+package org.sonar.plugins.android.sensor.rulesgenerator.dto;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
-import org.sonar.plugins.android.lint.rulesgenerator.SonarSeverity;
+import org.sonar.plugins.android.sensor.rulesgenerator.SonarSeverity;
 
 import java.util.ArrayList;
 import java.util.List;

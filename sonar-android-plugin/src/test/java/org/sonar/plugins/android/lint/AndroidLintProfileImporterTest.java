@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.lint;
+package org.sonar.plugins.android.sensor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +59,7 @@ public class AndroidLintProfileImporterTest {
 
   @Test
   public void should_import_profile() throws Exception {
-    RulesProfile rulesProfile = createRuleProfile("src/test/resources/importer/lint.xml");
+    RulesProfile rulesProfile = createRuleProfile("src/test/resources/importer/sensor.xml");
     assertThat(messages.hasErrors()).as("No error messages expected : " + messages.getErrors()).isFalse();
     assertThat(messages.hasWarnings()).isFalse();
     assertThat(messages.hasInfos()).isFalse();
@@ -68,7 +68,7 @@ public class AndroidLintProfileImporterTest {
 
   @Test
   public void should_report_errors_on_bad_profiles() throws Exception {
-    RulesProfile rulesProfile = createRuleProfile("src/test/resources/importer/lint-severity.xml");
+    RulesProfile rulesProfile = createRuleProfile("src/test/resources/importer/sensor-severity.xml");
     assertThat(messages.hasErrors()).as("No error messages expected : " + messages.getErrors()).isFalse();
     assertThat(messages.getWarnings()).hasSize(2);
     assertThat(messages.hasInfos()).isFalse();
@@ -77,7 +77,7 @@ public class AndroidLintProfileImporterTest {
 
   @Test
   public void bad_lint_xml_should_not_work() throws Exception {
-    RulesProfile rulesProfile = createRuleProfile("src/test/resources/importer/bad-lint.xml");
+    RulesProfile rulesProfile = createRuleProfile("src/test/resources/importer/bad-sensor.xml");
     assertThat(messages.getErrors()).hasSize(1);
     assertThat(messages.getWarnings()).isEmpty();
     assertThat(messages.hasInfos()).isFalse();
@@ -88,7 +88,7 @@ public class AndroidLintProfileImporterTest {
   public void should_handle_unknown_issues() throws Exception {
     RuleFinder mockFinder = mock(RuleFinder.class);
     when(mockFinder.findByKey(any(RuleKey.class))).thenReturn(null);
-    RulesProfile rulesProfile = new AndroidLintProfileImporter(mockFinder).importProfile(new FileReader("src/test/resources/importer/lint-unknown-rule.xml"), messages);
+    RulesProfile rulesProfile = new AndroidLintProfileImporter(mockFinder).importProfile(new FileReader("src/test/resources/importer/sensor-unknown-rule.xml"), messages);
     assertThat(messages.getWarnings()).containsExactly("Rule !FooBarUnknown! is unknown and has been skipped");
     assertThat(messages.hasErrors()).isFalse();
     assertThat(messages.hasInfos()).isFalse();

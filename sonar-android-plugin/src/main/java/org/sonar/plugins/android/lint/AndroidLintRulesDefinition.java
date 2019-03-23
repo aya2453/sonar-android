@@ -17,22 +17,24 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.lint;
+package org.sonar.plugins.android.sensor;
 
-import com.google.common.base.Charsets;
-import org.apache.commons.io.IOUtils;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinitionXmlLoader;
-import org.sonar.squidbridge.rules.SqaleXmlLoader;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 public class AndroidLintRulesDefinition implements RulesDefinition {
 
-  public static final String REPOSITORY_KEY = "android-lint";
+  public static final String REPOSITORY_KEY = "android-sensor";
   public static final String REPOSITORY_NAME = "Android Lint";
   public static final String RULES_XML_PATH = "/org/sonar/plugins/android/lint/rules.xml";
+  private static final Logger LOGGER = Loggers.get(AndroidLintRulesDefinition.class);
 
   private RulesDefinitionXmlLoader xmlLoader;
 
@@ -42,15 +44,12 @@ public class AndroidLintRulesDefinition implements RulesDefinition {
 
   @Override
   public void define(Context context) {
-    NewRepository repository = context.createRepository(REPOSITORY_KEY, "java").setName(REPOSITORY_NAME);
-    InputStream inputStream = getClass().getResourceAsStream(RULES_XML_PATH);
-    InputStreamReader reader = new InputStreamReader(inputStream, Charsets.UTF_8);
-    try {
+    try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(RULES_XML_PATH), StandardCharsets.UTF_8)) {
+      NewRepository repository = context.createRepository(REPOSITORY_KEY, "java").setName(REPOSITORY_NAME);
       xmlLoader.load(repository, reader);
-      SqaleXmlLoader.load(repository, "/org/sonar/plugins/android/lint/java-model.xml");
       repository.done();
-    } finally {
-      IOUtils.closeQuietly(reader);
+    } catch (IOException e) {
+      LOGGER.warn(String.format("Fail to read file %s", RULES_XML_PATH), e);
     }
   }
 }

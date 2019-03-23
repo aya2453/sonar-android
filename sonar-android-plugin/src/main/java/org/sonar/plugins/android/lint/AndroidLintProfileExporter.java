@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.lint;
+package org.sonar.plugins.android.sensor;
 
 import com.android.tools.lint.detector.api.Severity;
 import com.google.common.base.Charsets;
@@ -32,30 +32,25 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.profiles.ProfileExporter;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.RulePriority;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import javax.annotation.Nullable;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 
 public class AndroidLintProfileExporter extends ProfileExporter {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AndroidLintProfileExporter.class);
+  private static final Logger LOGGER = Loggers.get(AndroidLintProfileExporter.class);
 
   private Collection<String> ruleKeys;
 
@@ -102,19 +97,21 @@ public class AndroidLintProfileExporter extends ProfileExporter {
     }
   }
 
+
+
   @Override
   public void exportProfile(RulesProfile profile, Writer writer) {
     Serializer serializer = new Persister();
     try {
       serializer.write(createLintProfile(profile.getActiveRules()), writer);
     } catch (Exception e) {
-      LOGGER.error("Could not export lint profile", e);
+      LOGGER.error("Could not export sensor profile", e);
     }
   }
 
   private LintProfile createLintProfile(List<ActiveRule> activeRules) {
     LintProfile profile = new LintProfile();
-    Map<String, RulePriority> activeKeys = new HashMap<>();
+    Map<String, org.sonar.api.rule.Severity> activeKeys = new HashMap<>();
     List<LintIssue> issues = Lists.newArrayList();
     for (ActiveRule rule : activeRules) {
       activeKeys.put(rule.getRuleKey(), rule.getSeverity());
@@ -135,7 +132,7 @@ public class AndroidLintProfileExporter extends ProfileExporter {
     }
   }
 
-  @Root(name = "lint", strict = false)
+  @Root(name = "sensor", strict = false)
   static class LintProfile {
     @ElementList(inline = true)
     List<LintIssue> issues;
@@ -167,19 +164,19 @@ public class AndroidLintProfileExporter extends ProfileExporter {
 
     String lintSeverity = "";
     RulePriority severity = activeKeys.get(key);
-    if (severity.equals(RulePriority.BLOCKER)) {
+    if (severity.equals(org.sonar.api.rule.Severity.BLOCKER)) {
       lintSeverity = Severity.FATAL.getDescription();
     }
-    if (severity.equals(RulePriority.CRITICAL)) {
+    if (severity.equals(org.sonar.api.rule.Severity.CRITICAL)) {
       lintSeverity = Severity.ERROR.getDescription();
     }
-    if (severity.equals(RulePriority.MAJOR)) {
+    if (severity.equals(org.sonar.api.rule.Severity.MAJOR)) {
       lintSeverity = Severity.ERROR.getDescription();
     }
-    if (severity.equals(RulePriority.MINOR)) {
+    if (severity.equals(org.sonar.api.rule.Severity.MINOR)) {
       lintSeverity = Severity.WARNING.getDescription();
     }
-    if (severity.equals(RulePriority.INFO)) {
+    if (severity.equals(org.sonar.api.rule.Severity.INFO)) {
       lintSeverity = Severity.INFORMATIONAL.getDescription();
     }
     return new LintIssue(key, lintSeverity, null);
