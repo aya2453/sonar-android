@@ -2,6 +2,7 @@ package org.sonar.plugins.android
 
 import org.sonar.api.Plugin
 import org.sonar.api.config.PropertyDefinition
+import org.sonar.plugins.android.foundation.logger
 import org.sonar.plugins.android.profiles.AndroidLintProfile
 import org.sonar.plugins.android.rules.AndroidLintRulesDefinition
 import org.sonar.plugins.android.sensor2.AndroidLintSensor
@@ -9,6 +10,7 @@ import org.sonar.plugins.android.sensor2.AndroidLintSensor
 
 class AndroidLintPlugin : Plugin {
     override fun define(context: Plugin.Context) {
+        logger.info("Android Plugin Loaded")
         context.let {
             it.addExtension(listOf(
                     AndroidLintSensor::class.java,

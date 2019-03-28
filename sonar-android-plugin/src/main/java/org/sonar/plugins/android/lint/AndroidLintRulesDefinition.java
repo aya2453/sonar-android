@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.sensor;
+package org.sonar.plugins.android.lint;
 
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinitionXmlLoader;
@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
 
 public class AndroidLintRulesDefinition implements RulesDefinition {
 
-  public static final String REPOSITORY_KEY = "android-sensor";
+  public static final String REPOSITORY_KEY = "android-lint";
   public static final String REPOSITORY_NAME = "Android Lint";
   public static final String RULES_XML_PATH = "/org/sonar/plugins/android/lint/rules.xml";
   private static final Logger LOGGER = Loggers.get(AndroidLintRulesDefinition.class);

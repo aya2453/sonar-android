@@ -17,6 +17,8 @@ object AndroidLintProfileTest : Spek({
 //            result.rules().forEach {
 //                println("repoKey=${it.repoKey()}, ruleKey=${it.ruleKey()}")
 //            }
+            print(result)
+            println(result.rules())
         }
     }
 })

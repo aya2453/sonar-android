@@ -16,10 +16,6 @@ object AndroidLintRulesDefinitionTest : Spek({
         val repository = context.repository(REPOSITORY_KEY)
         it("repository") {
             assertEquals(158, 158)
-            (repository as RulesDefinition.ExtendedRepository).rules()
-            .forEach {
-                println("repoKey=${it.key()}, ruleKey=${it.name()}")
-            }
         }
     }
 })

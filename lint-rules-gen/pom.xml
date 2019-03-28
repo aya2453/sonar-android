@@ -38,11 +38,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.sonar-plugins.java</groupId>
-      <artifactId>sonar-java-plugin</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>com.android.tools.lint</groupId>
       <artifactId>lint</artifactId>
     </dependency>

@@ -15,40 +15,60 @@
   <description>Import Android Lint reports.</description>
 
   <properties>
-    <sonar.version>4.5.4</sonar.version>
+    <sonar.version>7.7-alpha1</sonar.version>
     <!-- Configuration for sonar-packaging-maven-plugin -->
     <sonar.pluginClass>org.sonar.plugins.android.AndroidPlugin</sonar.pluginClass>
     <sonar.pluginName>Android</sonar.pluginName>
     <sonar.requirePlugins>java:${sonar-java.version}</sonar.requirePlugins>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>google</id>
+      <url>https://maven.google.com</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
-      <groupId>org.codehaus.sonar.sslr-squid-bridge</groupId>
-      <artifactId>sslr-squid-bridge</artifactId>
-      <version>2.6</version>
-    </dependency>
-    <dependency>
-      <groupId>emma</groupId>
-      <artifactId>emma</artifactId>
-      <version>2.0.5312</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.sonar</groupId>
+      <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
+      <!-- minimal version of SonarQube to support. Note that the groupId was "org.codehaus.sonar" before version 5.2 -->
       <version>${sonar.version}</version>
+      <!-- mandatory scope -->
       <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.codehaus.sonar.sslr-squid-bridge</groupId>-->
+      <!--<artifactId>sslr-squid-bridge</artifactId>-->
+      <!--<version>2.6</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>emma</groupId>-->
+      <!--<artifactId>emma</artifactId>-->
+      <!--<version>2.0.5312</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.codehaus.sonar</groupId>-->
+      <!--<artifactId>sonar-plugin-api</artifactId>-->
+      <!--<version>${sonar.version}</version>-->
+      <!--<scope>provided</scope>-->
+      <!--<exclusions>-->
+        <!--<exclusion>-->
+          <!--<groupId>com.google.guava</groupId>-->
+          <!--<artifactId>guava</artifactId>-->
+        <!--</exclusion>-->
+      <!--</exclusions>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.codehaus.sonar-profiles.java</groupId>-->
+      <!--<artifactId>sonar-java-plugin</artifactId>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
     <dependency>
-      <groupId>org.codehaus.sonar-plugins.java</groupId>
-      <artifactId>sonar-java-plugin</artifactId>
-      <scope>provided</scope>
+      <groupId>org.sonarsource.analyzer-commons</groupId>
+      <artifactId>sonar-xml-parsing</artifactId>
+      <version>1.10.2.456</version>
     </dependency>
     <!-- Lint -->
     <dependency>
@@ -111,21 +131,14 @@
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.sonar</groupId>
+        <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
-        <version>1.13</version>
+        <version>1.18.0.372</version>
         <extensions>true</extensions>
         <configuration>
-          <!-- To overrides guava -->
-          <useChildFirstClassLoader>true</useChildFirstClassLoader>
+          <pluginClass>${sonar.pluginClass}</pluginClass>
         </configuration>
       </plugin>
     </plugins>

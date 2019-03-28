@@ -19,38 +19,36 @@
  */
 package org.sonar.plugins.android;
 
-import com.google.common.collect.ImmutableList;
-import org.sonar.api.Property;
-import org.sonar.api.SonarPlugin;
-import org.sonar.plugins.android.lint.AndroidLintProfileExporter;
-import org.sonar.plugins.android.lint.AndroidLintProfileImporter;
-import org.sonar.plugins.android.lint.AndroidLintRulesDefinition;
-import org.sonar.plugins.android.lint.AndroidLintSensor;
-import org.sonar.plugins.android.lint.AndroidLintSonarWay;
+import org.sonar.api.Plugin;
+import org.sonar.api.config.PropertyDefinition;
+import org.sonar.plugins.android.lint.*;
 
-import java.util.List;
 
-@Property(
-  key = AndroidPlugin.LINT_REPORT_PROPERTY,
-  defaultValue = AndroidPlugin.LINT_REPORT_PROPERTY_DEFAULT,
-  name = "Lint Report file",
-  description = "Path (absolute or relative) to the lint-results.xml file.",
-  project = true,
-  module = true,
-  global = false)
-public class AndroidPlugin extends SonarPlugin {
+public class AndroidPlugin implements Plugin {
 
-  public static final String LINT_REPORT_PROPERTY = "sonar.android.lint.report";
-  public static final String LINT_REPORT_PROPERTY_DEFAULT = "build/outputs/lint-results.xml";
+  public static class Property {
+    public static final String LINT_REPORT = "sonar.android.lint.report";
+    private static final String LINT_REPORT_DEFAULT = "build/outputs/lint-results.xml";
+    private static final String NAME = "Lint Report file";
+    private static final String DESCRIPTION = "Path (absolute or relative) to the lint-results.xml file.";
+  }
 
   @Override
-  public List getExtensions() {
-    return ImmutableList.of(
+  public void define(Context context) {
+    context.addExtensions(
       AndroidLintSensor.class,
       AndroidLintRulesDefinition.class,
       AndroidLintSonarWay.class,
       AndroidLintProfileExporter.class,
       AndroidLintProfileImporter.class
-      );
+    );
+
+    context.addExtension(
+      PropertyDefinition.builder(Property.LINT_REPORT)
+        .name(Property.NAME)
+        .description(Property.DESCRIPTION)
+        .defaultValue(Property.LINT_REPORT_DEFAULT)
+        .build()
+    );
   }
 }

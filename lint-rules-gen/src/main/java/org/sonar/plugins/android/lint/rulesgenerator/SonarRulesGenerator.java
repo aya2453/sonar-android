@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.sensor.rulesgenerator;
+package org.sonar.plugins.android.lint.rulesgenerator;
 
 import com.android.tools.lint.checks.BuiltinIssueRegistry;
 import com.android.tools.lint.client.api.IssueRegistry;
@@ -27,11 +27,11 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.plugins.android.sensor.AndroidLintRulesDefinition;
-import org.sonar.plugins.android.sensor.AndroidLintSonarWay;
-import org.sonar.plugins.android.sensor.rulesgenerator.dto.DtoProfile;
-import org.sonar.plugins.android.sensor.rulesgenerator.dto.DtoRule;
-import org.sonar.plugins.android.sensor.rulesgenerator.dto.DtoRules;
+import org.sonar.plugins.android.lint.AndroidLintRulesDefinition;
+import org.sonar.plugins.android.lint.AndroidLintSonarWay;
+import org.sonar.plugins.android.lint.rulesgenerator.dto.DtoProfile;
+import org.sonar.plugins.android.lint.rulesgenerator.dto.DtoRule;
+import org.sonar.plugins.android.lint.rulesgenerator.dto.DtoRules;
 
 import javax.annotation.Nullable;
 import java.io.File;

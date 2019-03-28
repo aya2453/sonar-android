@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.sensor;
+package org.sonar.plugins.android.lint;
 
 import com.android.tools.lint.checks.BuiltinIssueRegistry;
 import com.android.tools.lint.detector.api.Issue;
@@ -33,11 +33,11 @@ import org.sonar.api.rules.RulePriority;
 import org.sonar.api.utils.ValidationMessages;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonar.plugins.android.sensor.AndroidLintProfileExporter.LintProfile;
+import org.sonar.plugins.android.lint.AndroidLintProfileExporter.LintProfile;
 
 import java.io.Reader;
 
-import static org.sonar.plugins.android.sensor.AndroidLintProfileExporter.LintIssue;
+import static org.sonar.plugins.android.lint.AndroidLintProfileExporter.LintIssue;
 
 public class AndroidLintProfileImporter extends ProfileImporter {
 
@@ -73,8 +73,8 @@ public class AndroidLintProfileImporter extends ProfileImporter {
         }
       }
     } catch (Exception e) {
-      messages.addErrorText("Android sensor profile could not be imported.");
-      LOGGER.error("Android sensor profile could not be imported.", e);
+      messages.addErrorText("Android lint profile could not be imported.");
+      LOGGER.error("Android lint profile could not be imported.", e);
     }
     return rulesProfile;
   }

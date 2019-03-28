@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.sensor;
+package org.sonar.plugins.android.lint;
 
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
@@ -46,7 +46,7 @@ class AndroidLintProcessor {
   public static void process(final File lintXml, final SensorContext context) {
     Serializer serializer = new Persister();
     try {
-      LOGGER.info("Processing android sensor report: " + lintXml.getPath());
+      LOGGER.info("Processing android lint report: " + lintXml.getPath());
       serializer.read(LintIssues.class, lintXml).issues
         .stream()
         .filter(lintIssue ->

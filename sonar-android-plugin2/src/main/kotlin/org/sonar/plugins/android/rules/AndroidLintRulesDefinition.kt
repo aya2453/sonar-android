@@ -5,6 +5,7 @@ import org.sonar.api.server.rule.RulesDefinitionXmlLoader
 import org.sonar.plugins.android.foundation.REPOSITORY_KEY
 import org.sonar.plugins.android.foundation.REPOSITORY_NAME
 import org.sonar.plugins.android.foundation.RULES_XML_PATH
+import org.sonar.plugins.android.foundation.logger
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
@@ -14,6 +15,7 @@ class AndroidLintRulesDefinition constructor(
 
     // AndoridLintRuleProcessorに変える
     override fun define(context: RulesDefinition.Context) {
+        logger.info("Android : Rules Definition Loaded")
         val repository: RulesDefinition.NewRepository =
                 context.createRepository(REPOSITORY_KEY, "java")
                         .setName(REPOSITORY_NAME)

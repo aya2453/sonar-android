@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.sensor;
+package org.sonar.plugins.android.lint;
 
 import com.android.tools.lint.detector.api.Severity;
 import com.google.common.base.Charsets;
@@ -105,7 +105,7 @@ public class AndroidLintProfileExporter extends ProfileExporter {
     try {
       serializer.write(createLintProfile(profile.getActiveRules()), writer);
     } catch (Exception e) {
-      LOGGER.error("Could not export sensor profile", e);
+      LOGGER.error("Could not export lint profile", e);
     }
   }
 
@@ -132,7 +132,7 @@ public class AndroidLintProfileExporter extends ProfileExporter {
     }
   }
 
-  @Root(name = "sensor", strict = false)
+  @Root(name = "lint", strict = false)
   static class LintProfile {
     @ElementList(inline = true)
     List<LintIssue> issues;

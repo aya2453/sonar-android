@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.sensor;
+package org.sonar.plugins.android.lint;
 
 import com.google.common.collect.Lists;
 import org.fest.assertions.Fail;
@@ -75,7 +75,7 @@ public class AndroidLintProcessorTest {
   public void process_empty_report() throws Exception {
     // Process report
     try {
-      new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/sensor-report-empty.xml"));
+      new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/lint-report-empty.xml"));
     } catch (Exception e) {
       Fail.fail();
     }
@@ -85,7 +85,7 @@ public class AndroidLintProcessorTest {
   @Test
   public void process_report_with_relative_path() throws Exception {
     // Process report
-    new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/sensor-report.xml"));
+    new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/lint-report.xml"));
 
     // Check we raise 30 issues on 21 different rules
     verify(rulesProfile, times(21)).getActiveRule(anyString(), anyString());
@@ -95,7 +95,7 @@ public class AndroidLintProcessorTest {
   @Test
   public void process_report_with_absolute_path() throws Exception {
     // Process report
-    new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/sensor-results_absolute_path.xml"));
+    new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/lint-results_absolute_path.xml"));
 
     // Check we raise 8 issues on 8 different rules
     verify(rulesProfile, times(8)).getActiveRule(anyString(), anyString());
@@ -104,7 +104,7 @@ public class AndroidLintProcessorTest {
 
   @Test
   public void should_handle_bad_xml_results() throws Exception {
-    new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/sensor-bad-report.xml"));
+    new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/lint-bad-report.xml"));
     verify(rulesProfile, never()).getActiveRule(anyString(), anyString());
     verify(perspectives, never()).as(any(Class.class), any(InputPath.class));
   }
@@ -115,7 +115,7 @@ public class AndroidLintProcessorTest {
     when(perspectives.as(any(Class.class), any(InputPath.class))).thenReturn(issuable);
     when(issuable.newIssueBuilder()).thenReturn( mock(Issuable.IssueBuilder.class, new SelfReturningAnswer()));
 
-    new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/sensor-report.xml"));
+    new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/lint-report.xml"));
 
     verify(perspectives, times(30)).as(any(Class.class), any(InputPath.class));
     verify(issuable, times(30)).addIssue(any(Issue.class));
@@ -125,7 +125,7 @@ public class AndroidLintProcessorTest {
   @Test
   public void unknown_issue_should_not_be_reported() throws Exception {
     when(rulesProfile.getActiveRule(anyString(), anyString())).thenReturn(null);
-    new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/sensor-unknown-rule-report.xml"));
+    new AndroidLintProcessor(rulesProfile, perspectives, fs).process(new File("src/test/resources/lint-unknown-rule-report.xml"));
 
     verify(perspectives, never()).as(any(Class.class), any(InputPath.class));
 

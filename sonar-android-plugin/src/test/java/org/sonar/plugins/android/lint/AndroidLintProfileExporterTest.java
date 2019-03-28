@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugins.android.sensor;
+package org.sonar.plugins.android.lint;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
@@ -101,7 +101,7 @@ public class AndroidLintProfileExporterTest {
     RulesProfile profile = RulesProfile.create();
     for (RulesDefinition.Rule rule : rules) {
       // Deactivate first three rules for testing purpose.
-      profile.activateRule(Rule.create("android-sensor", rule.key()), RulePriority.valueOf(rule.severity()));
+      profile.activateRule(Rule.create("android-lint", rule.key()), RulePriority.valueOf(rule.severity()));
     }
     return profile;
   }
@@ -109,7 +109,7 @@ public class AndroidLintProfileExporterTest {
   private List<RulesDefinition.Rule> createRules() {
     RulesDefinition.Context context = new RulesDefinition.Context();
     new AndroidLintRulesDefinition(new RulesDefinitionXmlLoader()).define(context);
-    return context.repository("android-sensor").rules();
+    return context.repository("android-lint").rules();
   }
 
   private List<Rule> createAPIRule(List<RulesDefinition.Rule> rules) {
